@@ -1,2 +1,2 @@
 # prompt-vault
-A place to organize, build, optimize and manage your AI project prompts.
+Your archive for organizing, building, optimizing and manage your AI project prompts.
