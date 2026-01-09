@@ -9,13 +9,13 @@ class SummarizerScreen extends StatefulWidget {
 }
 
 class _SummarizerScreenState extends State<SummarizerScreen> {
-  // 1. Define 4 controllers for your new fields
   final TextEditingController _goalController = TextEditingController();
   final TextEditingController _contextController = TextEditingController();
   final TextEditingController _successController = TextEditingController();
   final TextEditingController _responseController = TextEditingController();
 
   final AIService _aiService = AIService();
+  String _title = "";
   String _result = "";
   bool _isLoading = false;
 
@@ -30,10 +30,10 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
 
     setState(() {
       _isLoading = true;
+      _title = ""; // Reset title
       _result = "";
     });
 
-    // 2. Combine inputs into a single structured string
     final combinedInput =
         '''
       GOAL: ${_goalController.text}
@@ -42,10 +42,11 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
       RESPONSE FORMAT: ${_responseController.text}
     ''';
 
-    final summary = await _aiService.summarize(combinedInput);
+    final responseMap = await _aiService.summarize(combinedInput);
 
     setState(() {
-      _result = summary;
+      _title = responseMap["title"]!;
+      _result = responseMap["body"]!;
       _isLoading = false;
     });
   }
@@ -60,7 +61,6 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                // Changed to allow all text fields to fit
                 child: Column(
                   children: [
                     _buildInputField(
@@ -95,13 +95,8 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
                     ),
                     const SizedBox(height: 20),
                     const Divider(),
-                    Text(
-                      _result,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+
+                    _buildResultArea(),
                   ],
                 ),
               ),
@@ -126,6 +121,26 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
         alignLabelWithHint: true,
         border: const OutlineInputBorder(),
       ),
+    );
+  }
+
+  Widget _buildResultArea() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_title.isNotEmpty) ...[
+          Text(
+            _title,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        Text(_result, style: const TextStyle(fontSize: 16, height: 1.5)),
+      ],
     );
   }
 }

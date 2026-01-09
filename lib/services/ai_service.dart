@@ -1,23 +1,39 @@
+import 'dart:convert';
 import 'package:firebase_ai/firebase_ai.dart';
 
 class AIService {
   final model = FirebaseAI.googleAI().generativeModel(
     model: 'gemini-2.5-flash',
+    generationConfig: GenerationConfig(responseMimeType: 'application/json'),
   );
 
-  Future<String> summarize(String structuredInput) async {
-    // 3. Updated prompt to handle the new structured input
+  Future<Map<String, String>> summarize(String structuredInput) async {
     final prompt = [
       Content.text(
-        "You are a helpful assistant. Based on the following structured requirements, please provide a tweet length, ambiguous response:\n\n$structuredInput",
+        "Based on these requirements: $structuredInput. "
+        "Provide a response with the following JSON keys: 'title' and 'body'.",
       ),
     ];
 
     try {
       final response = await model.generateContent(prompt);
-      return response.text ?? "Could not generate a response.";
+      final String? rawText = response.text;
+
+      if (rawText == null || rawText.isEmpty) {
+        return {"title": "Error", "body": "AI returned an empty response."};
+      }
+
+      final Map<String, dynamic> data = jsonDecode(rawText);
+
+      return {
+        "title": data["title"]?.toString() ?? "No Title",
+        "body": data["body"]?.toString() ?? "No Content",
+      };
     } catch (e) {
-      return "Error: $e";
+      return {
+        "title": "Parsing Error",
+        "body": "The AI response was not in the expected format. Details: $e",
+      };
     }
   }
 }
