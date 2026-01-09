@@ -1,22 +1,21 @@
 import 'package:firebase_ai/firebase_ai.dart';
 
 class AIService {
-  // Initialize the model (using gemini-2.5-flash for speed and efficiency)
   final model = FirebaseAI.googleAI().generativeModel(
     model: 'gemini-2.5-flash',
   );
 
-  Future<String> summarize(String userInput) async {
-    // Create the prompt instructions
+  Future<String> summarize(String structuredInput) async {
+    // 3. Updated prompt to handle the new structured input
     final prompt = [
       Content.text(
-        "Please provide a concise summary of the following text: \n\n $userInput",
+        "You are a helpful assistant. Based on the following structured requirements, please provide a tweet length, ambiguous response:\n\n$structuredInput",
       ),
     ];
 
     try {
       final response = await model.generateContent(prompt);
-      return response.text ?? "Could not generate summary.";
+      return response.text ?? "Could not generate a response.";
     } catch (e) {
       return "Error: $e";
     }

@@ -9,18 +9,40 @@ class SummarizerScreen extends StatefulWidget {
 }
 
 class _SummarizerScreenState extends State<SummarizerScreen> {
-  final TextEditingController _controller = TextEditingController();
+  // 1. Define 4 controllers for your new fields
+  final TextEditingController _goalController = TextEditingController();
+  final TextEditingController _contextController = TextEditingController();
+  final TextEditingController _successController = TextEditingController();
+  final TextEditingController _responseController = TextEditingController();
+
   final AIService _aiService = AIService();
   String _result = "";
   bool _isLoading = false;
 
   void _handleSummarize() async {
+    // Basic validation for required fields
+    if (_goalController.text.isEmpty || _responseController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in the required fields.")),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _result = "";
     });
 
-    final summary = await _aiService.summarize(_controller.text);
+    // 2. Combine inputs into a single structured string
+    final combinedInput =
+        '''
+      GOAL: ${_goalController.text}
+      CONTEXT: ${_contextController.text}
+      SUCCESS CRITERIA: ${_successController.text}
+      RESPONSE FORMAT: ${_responseController.text}
+    ''';
+
+    final summary = await _aiService.summarize(combinedInput);
 
     setState(() {
       _result = summary;
@@ -31,40 +53,78 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AI Text Summarizer")),
+      appBar: AppBar(title: const Text("AI Prompt Builder")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _controller,
-              maxLines: 8,
-              decoration: const InputDecoration(
-                hintText: "Paste your long text here...",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _handleSummarize,
-              child: _isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text("Summarize Text"),
-            ),
-            const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
-                child: Text(
-                  _result,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                // Changed to allow all text fields to fit
+                child: Column(
+                  children: [
+                    _buildInputField(
+                      _goalController,
+                      "What are you trying to accomplish? (Required)",
+                      3,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildInputField(
+                      _contextController,
+                      "What does the AI need to know?",
+                      3,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildInputField(
+                      _successController,
+                      "What does success look like for you?",
+                      3,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildInputField(
+                      _responseController,
+                      "How should the AI respond? (Required)",
+                      3,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _handleSummarize,
+                      child: _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text("Generate Response"),
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    Text(
+                      _result,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper method to keep the code clean
+  Widget _buildInputField(
+    TextEditingController controller,
+    String label,
+    int lines,
+  ) {
+    return TextField(
+      controller: controller,
+      maxLines: lines,
+      decoration: InputDecoration(
+        labelText: label,
+        alignLabelWithHint: true,
+        border: const OutlineInputBorder(),
       ),
     );
   }
