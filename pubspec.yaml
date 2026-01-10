@@ -37,6 +37,8 @@ dependencies:
   firebase_core: ^4.3.0
   firebase_ai: ^3.6.1
   google_fonts: ^7.0.0
+  fake_cloud_firestore: ^4.0.1
+  cloud_firestore: ^6.1.1
 
 dev_dependencies:
   flutter_test:
