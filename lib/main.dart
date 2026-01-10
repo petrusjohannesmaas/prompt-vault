@@ -1,8 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'screens/summarizer_screen.dart';
+import 'widgets/material3_bottom_nav.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,27 +18,18 @@ class SummarizerApp extends StatelessWidget {
     return MaterialApp(
       title: 'AI Summarizer',
       theme: ThemeData(
-        // Define the default brightness and colors.
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.purple,
-          // ···
-          brightness: Brightness.dark,
-        ),
-
-        // Define the default `TextTheme`. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
         textTheme: TextTheme(
           displayLarge: const TextStyle(
             fontSize: 72,
             fontWeight: FontWeight.bold,
           ),
-          // ···
           titleLarge: GoogleFonts.ubuntu(fontSize: 30),
           bodyMedium: GoogleFonts.merriweather(),
           displaySmall: GoogleFonts.pacifico(),
         ),
       ),
-      home: const SummarizerScreen(),
+      home: const Material3BottomNav(),
     );
   }
 }

@@ -54,7 +54,6 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AI Prompt Builder")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -91,7 +90,7 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
                       onPressed: _isLoading ? null : _handleSummarize,
                       child: _isLoading
                           ? const CircularProgressIndicator()
-                          : const Text("Generate Response"),
+                          : const Text("Generate Summary"),
                     ),
                     const SizedBox(height: 20),
                     const Divider(),
