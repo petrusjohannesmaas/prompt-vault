@@ -16,7 +16,7 @@ class SummarizerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Summarizer',
+      title: 'Prompt Vault',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
         textTheme: TextTheme(
@@ -25,8 +25,8 @@ class SummarizerApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
           titleLarge: GoogleFonts.ubuntu(fontSize: 30),
-          bodyMedium: GoogleFonts.merriweather(),
-          displaySmall: GoogleFonts.pacifico(),
+          bodyMedium: GoogleFonts.ubuntuSans(),
+          displaySmall: GoogleFonts.ubuntuSansMono(),
         ),
       ),
       home: const Material3BottomNav(),

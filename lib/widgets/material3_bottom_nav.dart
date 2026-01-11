@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/vault_screen.dart';
-import '../screens/summarizer_screen.dart';
+import '../screens/wizard_screen.dart';
 import '../screens/settings_drawer.dart';
 
 class Material3BottomNav extends StatefulWidget {
@@ -15,7 +15,7 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
 
   final List<Widget> _pages = const [
     VaultScreen(),
-    SummarizerScreen(),
+    WizardScreen(),
     SettingsDrawer(),
   ];
 
@@ -47,7 +47,7 @@ const _navBarItems = [
   NavigationDestination(
     icon: Icon(Icons.post_add_outlined),
     selectedIcon: Icon(Icons.post_add_rounded),
-    label: 'Summarizer',
+    label: 'Wizard',
   ),
   NavigationDestination(
     icon: Icon(Icons.settings_outlined),
