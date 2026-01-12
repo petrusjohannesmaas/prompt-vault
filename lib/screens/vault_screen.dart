@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:prompt_vault/services/firestore_service.dart';
+import 'package:prompt_vault/screens/summarizer_screen.dart';
+import 'package:prompt_vault/widgets/app_drawer.dart';
 
 class VaultScreen extends StatefulWidget {
   const VaultScreen({super.key});
@@ -15,60 +17,86 @@ class _VaultScreenState extends State<VaultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const title = 'Vault';
-
-    return MaterialApp(
-      title: title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(title)),
-        body: StreamBuilder<QuerySnapshot>(
-          stream: _firestoreService.getPromptsStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final docs = snapshot.data?.docs ?? [];
-
-            if (docs.isEmpty) {
-              return const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("😶‍🌫️", style: TextStyle(fontSize: 64)),
-                    SizedBox(height: 16),
-                    Text(
-                      "No prompts stored yet!",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return GridView.count(
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(8.0),
-              children: docs.map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-                return Center(
-                  child: Card.filled(
-                    child: _SampleCard(
-                      docId: doc.id,
-                      title: data['title'] ?? 'No Title',
-                      body: data['body'] ?? '',
-                      onDelete: () => _firestoreService.deletePrompt(doc.id),
-                    ),
-                  ),
-                );
-              }).toList(),
+    return Scaffold(
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
             );
           },
         ),
+        title: const Text('Prompt Vault'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SummarizerScreen(
+                    onSaveSuccess: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      drawer: const AppDrawer(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestoreService.getPromptsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final docs = snapshot.data?.docs ?? [];
+
+          if (docs.isEmpty) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("😶‍🌫️", style: TextStyle(fontSize: 64)),
+                  SizedBox(height: 16),
+                  Text(
+                    "No prompts stored yet!",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return GridView.count(
+            crossAxisCount: 2,
+            padding: const EdgeInsets.all(8.0),
+            children: docs.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              return Center(
+                child: Card.filled(
+                  child: _SampleCard(
+                    docId: doc.id,
+                    title: data['title'] ?? 'No Title',
+                    body: data['body'] ?? '',
+                    onDelete: () => _firestoreService.deletePrompt(doc.id),
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        },
       ),
     );
   }

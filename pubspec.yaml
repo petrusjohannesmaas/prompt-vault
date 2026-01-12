@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^7.0.0
   fake_cloud_firestore: ^4.0.1
   cloud_firestore: ^6.1.1
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

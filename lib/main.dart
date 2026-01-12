@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'widgets/material3_bottom_nav.dart';
+import 'screens/vault_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ class SummarizerApp extends StatelessWidget {
           displaySmall: GoogleFonts.ubuntuSansMono(),
         ),
       ),
-      home: const Material3BottomNav(),
+      home: const VaultScreen(),
     );
   }
 }
