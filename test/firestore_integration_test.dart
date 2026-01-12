@@ -3,7 +3,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
-  test('Creating a post should add a document to the posts collection', () async {
+  test('Creating a post should add a document to the vault collection', () async {
     final db = FakeFirebaseFirestore();
 
     final post = <String, dynamic>{
@@ -13,10 +13,10 @@ void main() {
       "createdAt": FieldValue.serverTimestamp(),
     };
 
-    final DocumentReference docRef = await db.collection("posts").add(post);
+    final DocumentReference docRef = await db.collection("vault").add(post);
 
     final DocumentSnapshot snapshot = await db
-        .collection("posts")
+        .collection("vault")
         .doc(docRef.id)
         .get();
 

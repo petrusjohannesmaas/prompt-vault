@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+// import 'package:prompt_vault/screens/wizard_screen.dart';
 import '../screens/vault_screen.dart';
-import '../screens/wizard_screen.dart';
+// import '../screens/wizard_screen.dart';
+import '../screens/summarizer_screen.dart';
 import '../screens/settings_drawer.dart';
 
 class Material3BottomNav extends StatefulWidget {
@@ -15,7 +17,8 @@ class _Material3BottomNavState extends State<Material3BottomNav> {
 
   final List<Widget> _pages = const [
     VaultScreen(),
-    WizardScreen(),
+    SummarizerScreen(),
+    // WizardScreen(),
     SettingsDrawer(),
   ];
 

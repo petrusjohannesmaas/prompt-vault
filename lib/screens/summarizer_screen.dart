@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:prompt_vault/services/ai_service.dart';
+import 'package:prompt_vault/services/firestore_service.dart';
 
 class SummarizerScreen extends StatefulWidget {
-  const SummarizerScreen({super.key});
+  final VoidCallback? onSaveSuccess;
+
+  const SummarizerScreen({super.key, this.onSaveSuccess});
 
   @override
   State<SummarizerScreen> createState() => _SummarizerScreenState();
@@ -15,8 +18,7 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
   final TextEditingController _responseController = TextEditingController();
 
   final AIService _aiService = AIService();
-  String _title = "";
-  String _result = "";
+  final FirestoreService _firestoreService = FirestoreService();
   bool _isLoading = false;
 
   void _handleSummarize() async {
@@ -30,8 +32,6 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
 
     setState(() {
       _isLoading = true;
-      _title = ""; // Reset title
-      _result = "";
     });
 
     final combinedInput =
@@ -44,11 +44,42 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
 
     final responseMap = await _aiService.summarize(combinedInput);
 
-    setState(() {
-      _title = responseMap["title"]!;
-      _result = responseMap["body"]!;
-      _isLoading = false;
-    });
+    if (mounted) {
+      final title = responseMap["title"]!;
+      final body = responseMap["body"]!;
+
+      try {
+        await _firestoreService.savePrompt(title, body);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Summary saved to Vault!")),
+          );
+
+          // Clear inputs
+          _goalController.clear();
+          _contextController.clear();
+          _successController.clear();
+          _responseController.clear();
+
+          setState(() {
+            _isLoading = false;
+          });
+
+          // Redirect if callback is provided
+          widget.onSaveSuccess?.call();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Error saving to vault: $e")));
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -92,10 +123,6 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
                           ? const CircularProgressIndicator()
                           : const Text("Generate Summary"),
                     ),
-                    const SizedBox(height: 20),
-                    const Divider(),
-
-                    _buildResultArea(),
                   ],
                 ),
               ),
@@ -120,26 +147,6 @@ class _SummarizerScreenState extends State<SummarizerScreen> {
         alignLabelWithHint: true,
         border: const OutlineInputBorder(),
       ),
-    );
-  }
-
-  Widget _buildResultArea() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (_title.isNotEmpty) ...[
-          Text(
-            _title,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
-        Text(_result, style: const TextStyle(fontSize: 16, height: 1.5)),
-      ],
     );
   }
 }
