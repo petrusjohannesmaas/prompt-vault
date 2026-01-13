@@ -1,73 +1,157 @@
 import 'package:flutter/material.dart';
+import 'package:prompt_vault/services/ai_service.dart';
+import 'package:prompt_vault/services/firestore_service.dart';
 
-class WizardScreen extends StatelessWidget {
-  const WizardScreen({super.key});
+class WizardScreen extends StatefulWidget {
+  final VoidCallback? onSaveSuccess;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: OnboardingPagePresenter(
-        pages: [
-          OnboardingPageModel(
-            title: 'Fast, Fluid and Secure',
-            description:
-                'Enjoy the best of the world in the palm of your hands.',
-            imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-            bgColor: Colors.indigo,
-          ),
-          OnboardingPageModel(
-            title: 'Connect with your friends.',
-            description: 'Connect with your friends anytime anywhere.',
-            imageUrl: 'https://i.ibb.co/LvmZypG/storefront-illustration-2.png',
-            bgColor: const Color(0xff1eb090),
-          ),
-          OnboardingPageModel(
-            title: 'Bookmark your favourites',
-            description:
-                'Bookmark your favourite quotes to read at a leisure time.',
-            imageUrl: 'https://i.ibb.co/420D7VP/building.png',
-            bgColor: const Color(0xfffeae4f),
-          ),
-          OnboardingPageModel(
-            title: 'Follow creators',
-            description: 'Follow your favourite creators to stay in the loop.',
-            imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-            bgColor: Colors.purple,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class OnboardingPagePresenter extends StatefulWidget {
-  final List<OnboardingPageModel> pages;
-  final VoidCallback? onSkip;
-  final VoidCallback? onFinish;
-
-  const OnboardingPagePresenter({
-    super.key,
-    required this.pages,
-    this.onSkip,
-    this.onFinish,
-  });
+  const WizardScreen({super.key, this.onSaveSuccess});
 
   @override
-  State<OnboardingPagePresenter> createState() => _OnboardingPageState();
+  State<WizardScreen> createState() => _WizardScreenState();
 }
 
-class _OnboardingPageState extends State<OnboardingPagePresenter> {
+class _WizardScreenState extends State<WizardScreen> {
   // Store the currently visible page
   int _currentPage = 0;
   // Define a controller for the pageview
   final PageController _pageController = PageController(initialPage: 0);
+
+  // Form Controllers
+  final TextEditingController _goalController = TextEditingController();
+  final TextEditingController _contextController = TextEditingController();
+  final TextEditingController _successController = TextEditingController();
+  final TextEditingController _responseController = TextEditingController();
+
+  // Services
+  final AIService _aiService = AIService();
+  final FirestoreService _firestoreService = FirestoreService();
+  bool _isLoading = false;
+
+  late List<OnboardingPageModel> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      OnboardingPageModel(
+        title: 'Goal',
+        description: 'What are you trying to accomplish?',
+        imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
+        bgColor: Colors.indigo,
+        inputController: _goalController,
+        inputLabel: 'Goal (Required)',
+      ),
+      OnboardingPageModel(
+        title: 'Context',
+        description: 'What does the AI need to know?',
+        imageUrl: 'https://i.ibb.co/LvmZypG/storefront-illustration-2.png',
+        bgColor: const Color(0xff1eb090),
+        inputController: _contextController,
+        inputLabel: 'Context',
+      ),
+      OnboardingPageModel(
+        title: 'Success Criteria',
+        description: 'What does success look like for you?',
+        imageUrl: 'https://i.ibb.co/420D7VP/building.png',
+        bgColor: const Color(0xfffeae4f),
+        inputController: _successController,
+        inputLabel: 'Success Criteria',
+      ),
+      OnboardingPageModel(
+        title: 'Response Format',
+        description: 'How should the AI respond?',
+        imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
+        bgColor: Colors.purple,
+        inputController: _responseController,
+        inputLabel: 'Response Format (Required)',
+      ),
+    ];
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _goalController.dispose();
+    _contextController.dispose();
+    _successController.dispose();
+    _responseController.dispose();
+    super.dispose();
+  }
+
+  void _handleSummarize() async {
+    // Basic validation for required fields
+    if (_goalController.text.isEmpty || _responseController.text.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please fill in the required fields.")),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final combinedInput =
+        '''
+      GOAL: ${_goalController.text}
+      CONTEXT: ${_contextController.text}
+      SUCCESS CRITERIA: ${_successController.text}
+      RESPONSE FORMAT: ${_responseController.text}
+    ''';
+
+    final responseMap = await _aiService.summarize(combinedInput);
+
+    if (mounted) {
+      final title = responseMap["title"]!;
+      final body = responseMap["body"]!;
+
+      try {
+        await _firestoreService.savePrompt(title, body);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Summary saved to Vault!")),
+          );
+
+          // Clear inputs
+          _goalController.clear();
+          _contextController.clear();
+          _successController.clear();
+          _responseController.clear();
+
+          setState(() {
+            _isLoading = false;
+          });
+
+          // Navigate back or call callback
+          if (widget.onSaveSuccess != null) {
+            widget.onSaveSuccess!();
+          } else {
+            Navigator.pop(context);
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Error saving to vault: $e")));
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        color: widget.pages[_currentPage].bgColor,
+        color: _pages[_currentPage].bgColor,
         child: SafeArea(
           child: Column(
             children: [
@@ -75,7 +159,7 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                 // Pageview to render each page
                 child: PageView.builder(
                   controller: _pageController,
-                  itemCount: widget.pages.length,
+                  itemCount: _pages.length,
                   onPageChanged: (idx) {
                     // Change current page when pageview changes
                     setState(() {
@@ -83,50 +167,92 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                     });
                   },
                   itemBuilder: (context, idx) {
-                    final item = widget.pages[idx];
-                    return Column(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(32.0),
-                            child: Image.network(item.imageUrl),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  item.title,
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: item.textColor,
+                    final item = _pages[idx];
+                    return SingleChildScrollView(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(32.0),
+                                child: Image.network(item.imageUrl),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      item.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: item.textColor,
+                                          ),
+                                    ),
+                                  ),
+                                  // NEW: Input Field injected here
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0,
+                                      vertical: 8.0,
+                                    ),
+                                    child: TextField(
+                                      controller: item.inputController,
+                                      style: TextStyle(color: item.textColor),
+                                      decoration: InputDecoration(
+                                        labelText: item.inputLabel,
+                                        labelStyle: TextStyle(
+                                          color: item.textColor.withOpacity(
+                                            0.8,
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: item.textColor.withOpacity(
+                                              0.5,
+                                            ),
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: item.textColor,
+                                            width: 2.0,
+                                          ),
+                                        ),
                                       ),
-                                ),
+                                      maxLines: 3,
+                                    ),
+                                  ),
+                                  Container(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 280,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0,
+                                      vertical: 16.0,
+                                    ),
+                                    child: Text(
+                                      item.description,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(color: item.textColor),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Container(
-                                constraints: const BoxConstraints(
-                                  maxWidth: 280,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24.0,
-                                  vertical: 8.0,
-                                ),
-                                child: Text(
-                                  item.description,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(color: item.textColor),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     );
                   },
                 ),
@@ -135,13 +261,11 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
               // Current page indicator
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.pages
+                children: _pages
                     .map(
                       (item) => AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
-                        width: _currentPage == widget.pages.indexOf(item)
-                            ? 30
-                            : 8,
+                        width: _currentPage == _pages.indexOf(item) ? 30 : 8,
                         height: 8,
                         margin: const EdgeInsets.all(2.0),
                         decoration: BoxDecoration(
@@ -169,9 +293,9 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                         ),
                       ),
                       onPressed: () {
-                        widget.onSkip?.call();
+                        if (mounted) Navigator.pop(context);
                       },
-                      child: const Text("Skip"),
+                      child: const Text("Cancel"),
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
@@ -183,8 +307,8 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                         ),
                       ),
                       onPressed: () {
-                        if (_currentPage == widget.pages.length - 1) {
-                          widget.onFinish?.call();
+                        if (_currentPage == _pages.length - 1) {
+                          _isLoading ? null : _handleSummarize();
                         } else {
                           _pageController.animateToPage(
                             _currentPage + 1,
@@ -195,14 +319,26 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                       },
                       child: Row(
                         children: [
+                          if (_isLoading)
+                            const Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
                           Text(
-                            _currentPage == widget.pages.length - 1
+                            _currentPage == _pages.length - 1
                                 ? "Finish"
                                 : "Next",
                           ),
                           const SizedBox(width: 8),
                           Icon(
-                            _currentPage == widget.pages.length - 1
+                            _currentPage == _pages.length - 1
                                 ? Icons.done
                                 : Icons.arrow_forward,
                           ),
@@ -226,6 +362,8 @@ class OnboardingPageModel {
   final String imageUrl;
   final Color bgColor;
   final Color textColor;
+  final TextEditingController? inputController;
+  final String? inputLabel;
 
   OnboardingPageModel({
     required this.title,
@@ -233,5 +371,7 @@ class OnboardingPageModel {
     required this.imageUrl,
     this.bgColor = Colors.blue,
     this.textColor = Colors.white,
+    this.inputController,
+    this.inputLabel,
   });
 }

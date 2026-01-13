@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:prompt_vault/services/firestore_service.dart';
-import 'package:prompt_vault/screens/summarizer_screen.dart';
+import 'package:prompt_vault/screens/wizard_screen.dart';
 import 'package:prompt_vault/widgets/app_drawer.dart';
 
 class VaultScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class _VaultScreenState extends State<VaultScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SummarizerScreen(
+                  builder: (context) => WizardScreen(
                     onSaveSuccess: () {
                       Navigator.pop(context);
                     },
