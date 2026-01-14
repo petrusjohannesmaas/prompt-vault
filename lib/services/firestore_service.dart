@@ -22,4 +22,13 @@ class FirestoreService {
   Future<void> deletePrompt(String docId) async {
     await _vaultCollection.doc(docId).delete();
   }
+
+  // Update an existing prompt
+  Future<void> updatePrompt(String docId, String title, String body) async {
+    await _vaultCollection.doc(docId).update({
+      'title': title,
+      'body': body,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
 }

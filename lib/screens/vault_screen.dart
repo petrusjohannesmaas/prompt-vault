@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:prompt_vault/services/firestore_service.dart';
+import 'package:prompt_vault/screens/edit_prompt_screen.dart';
 import 'package:prompt_vault/screens/wizard_screen.dart';
 import 'package:prompt_vault/widgets/app_drawer.dart';
 
@@ -79,20 +80,31 @@ class _VaultScreenState extends State<VaultScreen> {
             );
           }
 
-          return GridView.count(
-            crossAxisCount: 2,
+          return GridView.extent(
+            maxCrossAxisExtent: 300,
+            childAspectRatio: 0.8, // Taller cards
             padding: const EdgeInsets.all(8.0),
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
             children: docs.map((doc) {
               final data = doc.data() as Map<String, dynamic>;
-              return Center(
-                child: Card.filled(
-                  child: _SampleCard(
-                    docId: doc.id,
-                    title: data['title'] ?? 'No Title',
-                    body: data['body'] ?? '',
-                    onDelete: () => _firestoreService.deletePrompt(doc.id),
-                  ),
-                ),
+              return _SampleCard(
+                docId: doc.id,
+                title: data['title'] ?? 'No Title',
+                body: data['body'] ?? '',
+                onDelete: () => _firestoreService.deletePrompt(doc.id),
+                onEdit: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditPromptScreen(
+                        docId: doc.id,
+                        initialTitle: data['title'] ?? '',
+                        initialBody: data['body'] ?? '',
+                      ),
+                    ),
+                  );
+                },
               );
             }).toList(),
           );
@@ -108,51 +120,75 @@ class _SampleCard extends StatelessWidget {
     required this.title,
     required this.body,
     required this.onDelete,
+    required this.onEdit,
   });
 
   final String docId;
   final String title;
   final String body;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300,
-      height: 150,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete_outline, color: Colors.red),
-                  tooltip: 'Delete',
+    return Card.filled(
+      clipBehavior: Clip.hardEdge,
+      child: InkWell(
+        onTap: onEdit,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.left,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const Divider(),
+              Expanded(
+                child: Text(
+                  body,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 6, // Truncate after 6 lines
+                  overflow: TextOverflow.ellipsis,
                 ),
-                IconButton(
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: body));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Copied to clipboard!')),
-                    );
-                  },
-                  icon: const Icon(Icons.copy, color: Colors.blue),
-                  tooltip: 'Copy Body',
-                ),
-              ],
-            ),
-          ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: onEdit,
+                    icon: const Icon(Icons.edit, size: 20),
+                    tooltip: 'Edit',
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: body));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Copied to clipboard!')),
+                      );
+                    },
+                    icon: const Icon(Icons.copy, size: 20),
+                    tooltip: 'Copy Body',
+                  ),
+                  IconButton(
+                    onPressed: onDelete,
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    tooltip: 'Delete',
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
