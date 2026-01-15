@@ -26,7 +26,29 @@ class _WizardScreenState extends State<WizardScreen> {
   // Services
   final AIService _aiService = AIService();
   final FirestoreService _firestoreService = FirestoreService();
+
   bool _isLoading = false;
+
+  // Prompt Types
+  String _selectedPromptType = 'Standard';
+  final List<Map<String, String>> _promptTypes = [
+    {
+      'title': 'Standard',
+      'description': 'Default, conversational, explanatory and non pretentious',
+    },
+    {
+      'title': 'Professional',
+      'description': 'Polished, formal, concise business-like language',
+    },
+    {
+      'title': 'Step by step',
+      'description': 'Instructional, guiding the reader through a process.',
+    },
+    {
+      'title': 'Questions',
+      'description': 'Frame the output as a Q&A or quiz-like format',
+    },
+  ];
 
   late List<OnboardingPageModel> _pages;
 
@@ -63,8 +85,8 @@ class _WizardScreenState extends State<WizardScreen> {
         description: 'How should the AI respond?',
         imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
         bgColor: Colors.purple,
-        inputController: _responseController,
-        inputLabel: 'Response Format (Required)',
+        // Removed controller, will use selection
+        inputLabel: 'Response Format',
       ),
     ];
   }
@@ -81,7 +103,8 @@ class _WizardScreenState extends State<WizardScreen> {
 
   void _handleSummarize() async {
     // Basic validation for required fields
-    if (_goalController.text.isEmpty || _responseController.text.isEmpty) {
+    // Basic validation for required fields
+    if (_goalController.text.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Please fill in the required fields.")),
@@ -99,17 +122,20 @@ class _WizardScreenState extends State<WizardScreen> {
       GOAL: ${_goalController.text}
       CONTEXT: ${_contextController.text}
       SUCCESS CRITERIA: ${_successController.text}
-      RESPONSE FORMAT: ${_responseController.text}
+      RESPONSE FORMAT: $_selectedPromptType (See prompt type description below)
     ''';
 
-    final responseMap = await _aiService.summarize(combinedInput);
+    final responseMap = await _aiService.summarize(
+      combinedInput,
+      _selectedPromptType,
+    );
 
     if (mounted) {
       final title = responseMap["title"]!;
       final body = responseMap["body"]!;
 
       try {
-        await _firestoreService.savePrompt(title, body);
+        await _firestoreService.savePrompt(title, body, _selectedPromptType);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -198,38 +224,112 @@ class _WizardScreenState extends State<WizardScreen> {
                                     ),
                                   ),
                                   // NEW: Input Field injected here
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0,
-                                      vertical: 8.0,
-                                    ),
-                                    child: TextField(
-                                      controller: item.inputController,
-                                      style: TextStyle(color: item.textColor),
-                                      decoration: InputDecoration(
-                                        labelText: item.inputLabel,
-                                        labelStyle: TextStyle(
-                                          color: item.textColor.withOpacity(
-                                            0.8,
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
+                                  if (idx == 3)
+                                    // Custom Selection for Step 4
+                                    Container(
+                                      height: 300,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 24.0,
+                                      ),
+                                      child: ListView.separated(
+                                        padding: EdgeInsets.zero,
+                                        itemCount: _promptTypes.length,
+                                        separatorBuilder: (ctx, i) =>
+                                            const SizedBox(height: 8),
+                                        itemBuilder: (ctx, i) {
+                                          final type = _promptTypes[i];
+                                          final isSelected =
+                                              _selectedPromptType ==
+                                              type['title'];
+                                          return GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedPromptType =
+                                                    type['title']!;
+                                              });
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(
+                                                12.0,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? Colors.white.withOpacity(
+                                                        0.2,
+                                                      )
+                                                    : Colors.transparent,
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : Colors.white
+                                                            .withOpacity(0.3),
+                                                  width: isSelected ? 2.0 : 1.0,
+                                                ),
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    type['title']!,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    type['description']!,
+                                                    style: TextStyle(
+                                                      color: Colors.white
+                                                          .withOpacity(0.9),
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  else
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 24.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: TextField(
+                                        controller: item.inputController,
+                                        style: TextStyle(color: item.textColor),
+                                        decoration: InputDecoration(
+                                          labelText: item.inputLabel,
+                                          labelStyle: TextStyle(
                                             color: item.textColor.withOpacity(
-                                              0.5,
+                                              0.8,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: item.textColor.withOpacity(
+                                                0.5,
+                                              ),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: item.textColor,
+                                              width: 2.0,
                                             ),
                                           ),
                                         ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: item.textColor,
-                                            width: 2.0,
-                                          ),
-                                        ),
+                                        maxLines: 3,
                                       ),
-                                      maxLines: 3,
                                     ),
-                                  ),
                                   Container(
                                     constraints: const BoxConstraints(
                                       maxWidth: 280,
