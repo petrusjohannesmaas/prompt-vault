@@ -28,14 +28,14 @@ class _VaultScreenState extends State<VaultScreen> {
   Color _getTypeColor(String type) {
     switch (type) {
       case 'Professional':
-        return const Color(0xFF3AA0F7).withOpacity(0.2); // Electric Blue
+        return const Color(0xFF3AA0F7).withValues(alpha: 0.2); // Electric Blue
       case 'Questions':
-        return const Color(0xFFF5A623).withOpacity(0.2); // Amber
+        return const Color(0xFFF5A623).withValues(alpha: 0.2); // Amber
       case 'Step by step':
-        return const Color(0xFF2ECC71).withOpacity(0.2); // Emerald
+        return const Color(0xFF2ECC71).withValues(alpha: 0.2); // Emerald
       case 'Standard':
       default:
-        return const Color(0xFF7B69F2).withOpacity(0.2); // Purple
+        return const Color(0xFF7B69F2).withValues(alpha: 0.2); // Purple
     }
   }
 
@@ -91,7 +91,7 @@ class _VaultScreenState extends State<VaultScreen> {
             child: ElevatedButton.icon(
               icon: const Icon(Icons.add, color: Colors.white),
               label: const Text(
-                '+ New Prompt',
+                'New Prompt',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -168,7 +168,7 @@ class _VaultScreenState extends State<VaultScreen> {
 
           return GridView.extent(
             maxCrossAxisExtent: 300,
-            childAspectRatio: 0.9, // Adjusted aspect ratio
+            childAspectRatio: 1.1, // Adjusted aspect ratio to be shorter
             padding: const EdgeInsets.all(16.0),
             mainAxisSpacing: 16.0,
             crossAxisSpacing: 16.0,
@@ -259,19 +259,22 @@ class _SampleCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: tagColor,
         borderRadius: BorderRadius.circular(20.0),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       padding: const EdgeInsets.all(16.0),
-      child: InkWell(
+      // Removed InkWell to prevent weird grey hover effect.
+      // Using GestureDetector if tapping the whole card is truly needed, or relying on the edit button.
+      // Assuming tapping the whole card should edit:
+      child: GestureDetector(
         onTap: onEdit,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,7 +305,9 @@ class _SampleCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: tagColor,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black.withValues(alpha: 0.3)
+                        : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(

@@ -76,7 +76,7 @@ class _WizardScreenState extends State<WizardScreen> {
         title: 'Success Criteria',
         description: 'What does success look like for you?',
         imageUrl: 'https://i.ibb.co/420D7VP/building.png',
-        bgColor: const Color(0xFF2ECC71), // Emerald
+        bgColor: const Color(0xFFF25CA2), // Pink
         inputController: _successController,
         inputLabel: 'Success Criteria',
       ),
@@ -199,156 +199,148 @@ class _WizardScreenState extends State<WizardScreen> {
                         height: MediaQuery.of(context).size.height * 0.8,
                         child: Column(
                           children: [
-                            Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(32.0),
-                                child: Image.network(item.imageUrl),
-                              ),
+                            Padding(
+                              padding: const EdgeInsets.all(32.0),
+                              child: Image.network(item.imageUrl, height: 200),
                             ),
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      item.title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: item.textColor,
-                                          ),
-                                    ),
+                            Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    item.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: item.textColor,
+                                        ),
                                   ),
-                                  // NEW: Input Field injected here
-                                  if (idx == 3)
-                                    // Custom Selection for Step 4
-                                    Container(
-                                      height: 300,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24.0,
-                                      ),
-                                      child: ListView.separated(
-                                        padding: EdgeInsets.zero,
-                                        itemCount: _promptTypes.length,
-                                        separatorBuilder: (ctx, i) =>
-                                            const SizedBox(height: 8),
-                                        itemBuilder: (ctx, i) {
-                                          final type = _promptTypes[i];
-                                          final isSelected =
-                                              _selectedPromptType ==
-                                              type['title'];
-                                          return GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _selectedPromptType =
-                                                    type['title']!;
-                                              });
-                                            },
-                                            child: Container(
-                                              padding: const EdgeInsets.all(
-                                                12.0,
-                                              ),
-                                              decoration: BoxDecoration(
+                                ),
+                                // NEW: Input Field injected here
+                                if (idx == 3)
+                                  // Custom Selection for Step 4
+                                  Container(
+                                    height: 300,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0,
+                                    ),
+                                    child: ListView.separated(
+                                      padding: EdgeInsets.zero,
+                                      itemCount: _promptTypes.length,
+                                      separatorBuilder: (ctx, i) =>
+                                          const SizedBox(height: 8),
+                                      itemBuilder: (ctx, i) {
+                                        final type = _promptTypes[i];
+                                        final isSelected =
+                                            _selectedPromptType ==
+                                            type['title'];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedPromptType =
+                                                  type['title']!;
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12.0),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? Colors.white.withValues(
+                                                      alpha: 0.2,
+                                                    )
+                                                  : Colors.transparent,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              border: Border.all(
                                                 color: isSelected
-                                                    ? Colors.white.withOpacity(
-                                                        0.2,
-                                                      )
-                                                    : Colors.transparent,
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                border: Border.all(
-                                                  color: isSelected
-                                                      ? Colors.white
-                                                      : Colors.white
-                                                            .withOpacity(0.3),
-                                                  width: isSelected ? 2.0 : 1.0,
+                                                    ? Colors.white
+                                                    : Colors.white.withValues(
+                                                        alpha: 0.3,
+                                                      ),
+                                                width: isSelected ? 2.0 : 1.0,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  type['title']!,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  ),
                                                 ),
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    type['title']!,
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16,
-                                                    ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  type['description']!,
+                                                  style: TextStyle(
+                                                    color: Colors.white
+                                                        .withValues(alpha: 0.9),
+                                                    fontSize: 12,
                                                   ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    type['description']!,
-                                                    style: TextStyle(
-                                                      color: Colors.white
-                                                          .withOpacity(0.9),
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  else
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24.0,
-                                        vertical: 8.0,
-                                      ),
-                                      child: TextField(
-                                        controller: item.inputController,
-                                        style: TextStyle(color: item.textColor),
-                                        decoration: InputDecoration(
-                                          labelText: item.inputLabel,
-                                          labelStyle: TextStyle(
-                                            color: item.textColor.withOpacity(
-                                              0.8,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: item.textColor.withOpacity(
-                                                0.5,
-                                              ),
-                                            ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                else
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0,
+                                      vertical: 8.0,
+                                    ),
+                                    child: TextField(
+                                      controller: item.inputController,
+                                      style: TextStyle(color: item.textColor),
+                                      decoration: InputDecoration(
+                                        labelText: item.inputLabel,
+                                        labelStyle: TextStyle(
+                                          color: item.textColor.withValues(
+                                            alpha: 0.8,
                                           ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: item.textColor,
-                                              width: 2.0,
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: item.textColor.withValues(
+                                              alpha: 0.5,
                                             ),
                                           ),
                                         ),
-                                        maxLines: 3,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: item.textColor,
+                                            width: 2.0,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  Container(
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 280,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0,
-                                      vertical: 16.0,
-                                    ),
-                                    child: Text(
-                                      item.description,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(color: item.textColor),
+                                      maxLines: 3,
                                     ),
                                   ),
-                                ],
-                              ),
+                                Container(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 280,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24.0,
+                                    vertical: 16.0,
+                                  ),
+                                  child: Text(
+                                    item.description,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(color: item.textColor),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

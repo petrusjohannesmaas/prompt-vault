@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../main.dart'; // Import to access themeModeNotifier
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -39,6 +40,27 @@ class AppDrawer extends StatelessWidget {
               ),
             ),
           ),
+          ValueListenableBuilder<ThemeMode>(
+            valueListenable: themeModeNotifier,
+            builder: (context, mode, child) {
+              final isDark =
+                  mode == ThemeMode.dark ||
+                  (mode == ThemeMode.system &&
+                      MediaQuery.platformBrightnessOf(context) ==
+                          Brightness.dark);
+              return SwitchListTile(
+                title: const Text('Dark Mode'),
+                secondary: Icon(isDark ? Icons.dark_mode : Icons.light_mode),
+                value: isDark,
+                onChanged: (val) {
+                  themeModeNotifier.value = val
+                      ? ThemeMode.dark
+                      : ThemeMode.light;
+                },
+              );
+            },
+          ),
+          const Divider(),
           ListTile(
             leading: Icon(
               Icons.logout,
