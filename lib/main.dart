@@ -16,18 +16,36 @@ class SummarizerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Prompt Vault',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        colorScheme: const ColorScheme(
+          brightness: Brightness.light,
+          primary: Color(0xFF7B69F2), // Purple
+          onPrimary: Colors.white,
+          secondary: Color(0xFF4FCEA9), // Teal
+          onSecondary: Colors.white,
+          error: Color(0xFFE74C3C), // Crimson
+          onError: Colors.white,
+          surface: Colors.white,
+          onSurface: Color(0xFF1E1E2F), // Charcoal
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF9F9FB), // Off-white
         textTheme: TextTheme(
           displayLarge: const TextStyle(
             fontSize: 72,
             fontWeight: FontWeight.bold,
           ),
-          titleLarge: GoogleFonts.ubuntu(fontSize: 30),
-          bodyMedium: GoogleFonts.ubuntuSans(),
-          displaySmall: GoogleFonts.ubuntuSansMono(),
+          titleLarge: GoogleFonts.ubuntu(
+            fontSize: 30,
+            color: const Color(0xFF1E1E2F),
+          ),
+          bodyMedium: GoogleFonts.ubuntuSans(color: const Color(0xFF1E1E2F)),
+          displaySmall: GoogleFonts.ubuntuSansMono(
+            color: const Color(0xFF1E1E2F),
+          ),
         ),
+        useMaterial3: true,
       ),
       home: const VaultScreen(),
     );

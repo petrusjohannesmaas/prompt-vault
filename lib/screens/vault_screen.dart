@@ -28,28 +28,28 @@ class _VaultScreenState extends State<VaultScreen> {
   Color _getTypeColor(String type) {
     switch (type) {
       case 'Professional':
-        return Colors.blue.shade100;
+        return const Color(0xFF3AA0F7).withOpacity(0.2); // Electric Blue
       case 'Questions':
-        return Colors.orange.shade100;
+        return const Color(0xFFF5A623).withOpacity(0.2); // Amber
       case 'Step by step':
-        return Colors.green.shade100;
+        return const Color(0xFF2ECC71).withOpacity(0.2); // Emerald
       case 'Standard':
       default:
-        return Colors.purple.shade100;
+        return const Color(0xFF7B69F2).withOpacity(0.2); // Purple
     }
   }
 
   Color _getTypeTextColor(String type) {
     switch (type) {
       case 'Professional':
-        return Colors.blue.shade900;
+        return const Color(0xFF3AA0F7); // Electric Blue
       case 'Questions':
-        return Colors.orange.shade900;
+        return const Color(0xFFF5A623); // Amber
       case 'Step by step':
-        return Colors.green.shade900;
+        return const Color(0xFF2ECC71); // Emerald
       case 'Standard':
       default:
-        return Colors.purple.shade900;
+        return const Color(0xFF7B69F2); // Purple
     }
   }
 
@@ -83,23 +83,43 @@ class _VaultScreenState extends State<VaultScreen> {
                   });
                 },
               )
-            : const Text('Prompt Vault'),
+            : Image.asset('lib/assets/logo.png', height: 50),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WizardScreen(
-                    onSaveSuccess: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text(
+                '+ New Prompt',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            },
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WizardScreen(
+                      onSaveSuccess: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

@@ -60,7 +60,7 @@ class _WizardScreenState extends State<WizardScreen> {
         title: 'Goal',
         description: 'What are you trying to accomplish?',
         imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-        bgColor: Colors.indigo,
+        bgColor: const Color(0xFF7B69F2), // Purple
         inputController: _goalController,
         inputLabel: 'Goal (Required)',
       ),
@@ -68,7 +68,7 @@ class _WizardScreenState extends State<WizardScreen> {
         title: 'Context',
         description: 'What does the AI need to know?',
         imageUrl: 'https://i.ibb.co/LvmZypG/storefront-illustration-2.png',
-        bgColor: const Color(0xff1eb090),
+        bgColor: const Color(0xFF4FCEA9), // Teal
         inputController: _contextController,
         inputLabel: 'Context',
       ),
@@ -76,7 +76,7 @@ class _WizardScreenState extends State<WizardScreen> {
         title: 'Success Criteria',
         description: 'What does success look like for you?',
         imageUrl: 'https://i.ibb.co/420D7VP/building.png',
-        bgColor: const Color(0xfffeae4f),
+        bgColor: const Color(0xFF2ECC71), // Emerald
         inputController: _successController,
         inputLabel: 'Success Criteria',
       ),
@@ -84,7 +84,7 @@ class _WizardScreenState extends State<WizardScreen> {
         title: 'Response Format',
         description: 'How should the AI respond?',
         imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-        bgColor: Colors.purple,
+        bgColor: const Color(0xFF3AA0F7), // Electric Blue
         // Removed controller, will use selection
         inputLabel: 'Response Format',
       ),

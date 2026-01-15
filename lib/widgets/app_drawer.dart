@@ -17,22 +17,37 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.purple),
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+            ),
             child: Center(
-              child: Text(
-                'Prompt Vault',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('lib/assets/logo.png', height: 60),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Prompt Vault',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Log Out'),
+            leading: Icon(
+              Icons.logout,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            title: const Text(
+              'Log Out',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             onTap: () {
               // TODO: Implement Logout
               Navigator.pop(context);
@@ -43,14 +58,27 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.code), // Github icon placeholder
-            title: const Text('Check me out on Github'),
+            leading: Icon(
+              Icons.code,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            title: const Text(
+              'Check me out on Github',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             onTap: () {
               Navigator.pop(context);
-              _launchUrl(
-                'https://github.com/petrusjohannesmaas',
-              ); // Replace with actual URL if known
+              _launchUrl('https://github.com/petrusjohannesmaas');
             },
+          ),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'v1.0.0',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade400),
+            ),
           ),
         ],
       ),
