@@ -26,16 +26,16 @@ class AppDrawer extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('lib/assets/logo.png', height: 60),
+                  Image.asset('lib/assets/logo.png', height: 100),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Prompt Vault',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  // const Text(
+                  //   'Prompt Vault',
+                  //   style: TextStyle(
+                  //     color: Colors.white,
+                  //     fontSize: 24,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
