@@ -5,10 +5,11 @@ class FirestoreService {
       .collection('vault');
 
   // Save a new prompt result to Firestore
-  Future<void> savePrompt(String title, String body) async {
+  Future<void> savePrompt(String title, String body, String type) async {
     await _vaultCollection.add({
       'title': title,
       'body': body,
+      'type': type,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }

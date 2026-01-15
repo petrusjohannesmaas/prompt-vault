@@ -7,10 +7,14 @@ class AIService {
     generationConfig: GenerationConfig(responseMimeType: 'application/json'),
   );
 
-  Future<Map<String, String>> summarize(String structuredInput) async {
+  Future<Map<String, String>> summarize(
+    String structuredInput,
+    String promptType,
+  ) async {
     final prompt = [
       Content.text(
-        "Based on these requirements: $structuredInput. "
+        "Based on these requirements: $structuredInput.\n"
+        "PROMPT TYPE: $promptType.\n"
         "Provide a response with the following JSON keys: 'title' and 'body'.",
       ),
     ];
