@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#c1c1ff",
+                    "background": "#111317",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#793100",
+                    "on-error": "#690005",
+                    "primary-fixed-dim": "#c1c1ff",
+                    "on-tertiary-fixed": "#341100",
+                    "surface-bright": "#37393e",
+                    "surface-container-high": "#282a2e",
+                    "inverse-surface": "#e2e2e8",
+                    "on-tertiary-container": "#fff9f7",
+                    "inverse-primary": "#4643e9",
+                    "inverse-on-surface": "#2f3035",
+                    "secondary-container": "#404188",
+                    "secondary-fixed-dim": "#c1c1ff",
+                    "error": "#ffb4ab",
+                    "surface-container-highest": "#333539",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "secondary-fixed": "#e1dfff",
+                    "outline": "#908fa1",
+                    "on-secondary-container": "#b1b1ff",
+                    "surface-variant": "#333539",
+                    "on-primary-container": "#fdf9ff",
+                    "error-container": "#93000a",
+                    "on-primary": "#1500a8",
+                    "tertiary": "#ffb691",
+                    "on-primary-fixed": "#09006b",
+                    "on-secondary": "#27276e",
+                    "surface-container-lowest": "#0c0e12",
+                    "primary-fixed": "#e1dfff",
+                    "primary-container": "#5d5cff",
+                    "surface-tint": "#c1c1ff",
+                    "outline-variant": "#464556",
+                    "surface-container-low": "#1a1c20",
+                    "surface-container": "#1e2024",
+                    "on-secondary-fixed-variant": "#3e3f85",
+                    "surface": "#111317",
+                    "on-surface-variant": "#c7c4d8",
+                    "tertiary-fixed": "#ffdbcb",
+                    "secondary": "#c1c1ff",
+                    "on-tertiary": "#552000",
+                    "on-primary-fixed-variant": "#2b20d2",
+                    "tertiary-container": "#bf5200",
+                    "on-secondary-fixed": "#100d59",
+                    "on-background": "#e2e2e8",
+                    "surface-dim": "#111317",
+                    "on-surface": "#e2e2e8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #111317; color: #e2e2e8; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(55, 57, 62, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(70, 69, 86, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased overflow-hidden">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#1a1c20] font-inter antialiased text-sm flex flex-col py-8 px-4 z-50">
+<div class="mb-10 px-4">
+<div class="text-lg font-black tracking-tighter text-[#c1c1ff] mb-1">Prompt Vault</div>
+<div class="text-[10px] uppercase tracking-[0.1em] text-on-surface-variant opacity-60">Precision Archive</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#c1c1ff] transition-all hover:bg-[#1e2024] duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+                Vault
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c1c1ff] font-bold bg-[#1e2024] rounded-lg scale-98 active:scale-95 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                New Prompt
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#c1c1ff] transition-all hover:bg-[#1e2024] duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#c1c1ff] transition-all hover:bg-[#1e2024] duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto px-4 py-4 bg-surface-container rounded-xl flex items-center gap-3">
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant/20" data-alt="Close up portrait of a professional prompt engineer with neutral expression and moody cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqiWOIMQcaQKKpz_WjfbWiva7hLAOUlwbBEhzUq-rV-63AJ8QQJi4YHxOcf6U_9Un-QWaT7iQbsDXpaBArU-UcCGyj8K8PJkdHnP69AbRH-cUeUW-9rUFatO3U5-SWtkdDLZXutDQZe0O22ngBjtO2iOAEtOLkCoHB9mIXe5a8yI8NXXRaTJFsVPREU2iKfWaThG4B-v4Ydg2C0gjDgwvDtFhlfb8Uuk900IxoRY1Mtbb-GBTMWIUBd7bgmjn5jF2nHe3hH0_DIfet"/>
+<div class="flex flex-col">
+<span class="font-bold text-xs">Alex Chen</span>
+<span class="text-[10px] text-on-surface-variant">Pro Plan</span>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 z-40 bg-[#111317] flex items-center justify-between px-8 w-full">
+<div class="flex items-center gap-4">
+<h1 class="text-[#c1c1ff] font-semibold text-sm">Create New Prompt</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-lg" data-icon="search">search</span>
+<input class="bg-surface-container-highest text-xs rounded-full py-2 pl-10 pr-4 w-64 border-none focus:ring-1 focus:ring-primary/30 transition-all" placeholder="Search archive..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#c7c4d8]">
+<button class="hover:text-white transition-opacity active:opacity-70"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="hover:text-white transition-opacity active:opacity-70"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 h-screen overflow-y-auto bg-surface">
+<div class="max-w-4xl mx-auto px-12 py-20">
+<!-- Progress Indicator -->
+<div class="mb-16">
+<div class="flex items-center justify-between mb-4">
+<span class="label-sm text-[0.6875rem] uppercase tracking-widest text-primary font-bold">Step 1 of 3</span>
+<span class="label-sm text-[0.6875rem] uppercase tracking-widest text-on-surface-variant opacity-60">Goal &amp; Context</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-1/3 bg-gradient-to-r from-primary to-primary-container rounded-full shadow-[0_0_8px_rgba(193,193,255,0.4)]"></div>
+</div>
+</div>
+<!-- Centered Form Layout -->
+<div class="space-y-12">
+<header>
+<h2 class="text-4xl font-black tracking-tighter text-on-surface mb-3">Define the Intent.</h2>
+<p class="text-on-surface-variant body-md leading-relaxed max-w-xl">
+                        A precision prompt begins with a clear objective. Describe what you want the model to achieve and the underlying context it needs to understand.
+                    </p>
+</header>
+<div class="grid grid-cols-1 gap-10">
+<!-- Field 1 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<label class="label-sm text-[0.6875rem] uppercase tracking-widest font-semibold text-on-surface">What is your goal?</label>
+<span class="text-[10px] text-on-surface-variant opacity-50">Required</span>
+</div>
+<textarea class="w-full min-h-[160px] bg-surface-container-highest rounded-lg border-none focus:ring-1 focus:ring-primary/20 p-6 text-on-surface body-md placeholder:text-outline/40 resize-none transition-all shadow-inner" placeholder="e.g., Generate a technical architecture review for a microservices implementation..."></textarea>
+</div>
+<!-- Field 2 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<label class="label-sm text-[0.6875rem] uppercase tracking-widest font-semibold text-on-surface">Add Context</label>
+<span class="text-[10px] text-on-surface-variant opacity-50">Optional</span>
+</div>
+<textarea class="w-full min-h-[220px] bg-surface-container-highest rounded-lg border-none focus:ring-1 focus:ring-primary/20 p-6 text-on-surface body-md placeholder:text-outline/40 resize-none transition-all shadow-inner" placeholder="Provide background information, constraints, or audience details..."></textarea>
+<p class="text-[11px] text-on-surface-variant/60 italic px-1 pt-1">Pro tip: Mention the specific role or persona the AI should adopt for better results.</p>
+</div>
+</div>
+<!-- Actions -->
+<footer class="flex items-center justify-between pt-12">
+<button class="px-8 py-3 text-primary hover:bg-primary/5 rounded-lg transition-all font-semibold active:opacity-70">
+                        Cancel
+                    </button>
+<div class="flex gap-4">
+<button class="px-10 py-3 bg-gradient-to-b from-primary to-primary-container text-on-primary rounded-lg font-bold shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
+                            Next Step
+                            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</footer>
+</div>
+</div>
+</main>
+<!-- Contextual Aesthetic Element -->
+<div class="fixed bottom-0 right-0 p-12 pointer-events-none opacity-20">
+<div class="w-96 h-96 bg-primary/10 blur-[120px] rounded-full"></div>
+</div>
+</body></html>
